@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "c4-architecture": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "skillPath": "skills/c4-architecture/SKILL.md",
+      "computedHash": "9192b5d6be529478a70d1a73f3d4ce83db12c2052c4e6df4accd445f21e906d4"
+    },
+    "gherkin-authoring": {
+      "source": "melodic-software/claude-code-plugins",
+      "sourceType": "github",
+      "skillPath": "plugins/spec-driven-development/skills/gherkin-authoring/SKILL.md",
+      "computedHash": "44330460cc7554b6e36529fdf0f7618bdbad7399531bf7a3994ef06c3d76668e"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "daf64ca15f4fa081a6747766db538e2dbd1131725ed4fcdd3d538dc62c7035ba"
+    },
+    "uml-modeling": {
+      "source": "melodic-software/claude-code-plugins",
+      "sourceType": "github",
+      "skillPath": "plugins/formal-specification/skills/uml-modeling/SKILL.md",
+      "computedHash": "9b6c3f273cd3f0892502349969c12fdaacc8eacc1a239f2b499bca60dbac0796"
+    }
+  }
+}
