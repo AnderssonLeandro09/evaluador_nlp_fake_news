@@ -1,20 +1,30 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  FakeNews NLP Evaluator:
+  Sistema de evaluación comparativa entre los modelos de lenguaje BETO y mBERT para la detección automatizada de noticias falsas en español.
+  
+  Arquitectura del Sistema:
+  - Backend: FastAPI (Python) para exponer endpoints asíncronos de inferencia.
+  - Core NLP: Librería Transformers (Hugging Face) aislando la carga de tensores y tokenización.
+  - Base de Datos: SQLite local para persistir el historial de diagnósticos y métricas.
+  - Infraestructura: Despliegue empaquetado utilizando Docker Compose para levantar el servidor y los volúmenes de almacenamiento sin depender del entorno local.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Reglas de Desarrollo Críticas:
+  - EL IDIOMA OFICIAL DEL PROYECTO ES EL ESPAÑOL. Todos los artefactos (proposal, design, specs, tasks) deben generarse estrictamente en español.
+  - Todo el procesamiento de los modelos NLP debe ser ASÍNCRONO (`async/await`) para no bloquear el servidor.
+  - Todo el esquema de entrada/salida de datos debe validarse usando Pydantic.
+  - Seguir principios Clean Code y modularidad extrema.
+
+rules:
+  proposal:
+    - Must ask clarification questions before generating the proposal.
+    - El documento debe redactarse en español fluido y sin tecnicismos innecesarios.
+  specs:
+    - Must use `gherkin-authoring` skill para escribir los criterios de aceptación (Dado/Cuando/Entonces).
+  designs:
+    - Must use `c4-architecture` skill para mapear la interacción entre los endpoints de FastAPI y los modelos NLP.
+    - Explicar detalladamente la estructura del contenedor Docker (Dockerfile y docker-compose.yml).
+  tasks:
+    - Descomponer en tareas de programación de máximo 30 minutos.
+    - Separar las tareas de configuración de Docker de las tareas de lógica en Python.
