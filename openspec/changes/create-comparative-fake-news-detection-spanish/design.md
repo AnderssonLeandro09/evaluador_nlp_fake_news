@@ -1,96 +1,79 @@
-## Context
+# Diseño de Arquitectura: Plataforma de Evaluación Comparativa BETO vs mBERT
 
-This change addresses the growing need for specialized Spanish language models in fake news detection. Currently, there's no standardized comparative evaluation platform for BETO (Spanish BERT) and mBERT (Multilingual BERT) models specifically for Spanish fake news detection. The existing codebase lacks a systematic approach to model comparison and performance evaluation.
+Este documento define la arquitectura para la plataforma de evaluación comparativa de modelos de lenguaje, enfocada en la detección de noticias falsas en español. El sistema permitirá comparar objetivamente el rendimiento de BETO (Spanish BERT) y mBERT (Multilingual BERT).
 
-The project involves creating a FastAPI-based web service that will:
-- Load and preprocess Spanish fake news datasets
-- Perform async inference using both BETO and mBERT models via Hugging Face Transformers
-- Calculate comprehensive performance metrics (accuracy, precision, recall, F1-score)
-- Store evaluation results in SQLite database
-- Generate comparative reports via REST API endpoints
+## 1. Nivel 1: Diagrama de Contexto del Sistema (System Context)
 
-## Goals / Non-Goals
+El sistema actúa como una plataforma centralizada donde un investigador de datos puede enviar textos y recibir diagnósticos comparativos entre modelos NLP.
 
-**Goals:**
-- Create a unified platform for comparing BETO and mBERT model performance on Spanish fake news detection
-- Implement async processing for improved performance and scalability
-- Establish persistent storage of evaluation results for historical analysis
-- Provide REST API endpoints for easy integration with other systems
-- Develop data preprocessing pipeline optimized for Spanish text
+```mermaid
+C4Context
+  title Sistema Contexto - Plataforma de Evaluación NLP
+  Person(user, "Investigador", "Analiza el rendimiento de modelos")
+  System(system, "Plataforma de Evaluación NLP", "Compara BETO vs mBERT para detección de fake news")
+  
+  Rel(user, system, "Envía datos para evaluación")
+  Rel(system, user, "Retorna predicciones y métricas")
+```
 
-**Non-Goals:**
-- Training or fine-tuning the models from scratch
-- Developing a frontend interface (API-only interaction)
-- Real-time inference for streaming data
-- Integration with external MLflow or experiment tracking systems
-- Deployment to cloud infrastructure (local deployment focus)
+## 2. Nivel 2: Diagrama de Contenedores (Container Diagram)
 
-## Decisions
+El sistema se descompone en los siguientes contenedores tecnológicos:
 
-### Technology Stack
-**Decision:** Use FastAPI for the web framework, PyTorch/Hugging Face Transformers for model inference, SQLite for database, and Python for implementation.
+```mermaid
+C4Container
+  title Nivel 2: Diagrama de Contenedores
+  
+  Person(user, "Investigador", "Usuario del sistema")
 
-**Rationale:** FastAPI provides excellent async support and OpenAPI documentation. Hugging Face Transformers offers pre-trained BETO and mBERT models. SQLite provides lightweight, file-based storage without external dependencies. Python ecosystem has mature libraries for NLP and metrics calculation.
+  Container_Boundary(app, "Plataforma de Evaluación") {
+    Container(api, "API Application", "FastAPI, Python", "Orquestador de peticiones y endpoints REST")
+    Container(nlp, "NLP Engine", "Transformers, PyTorch", "Carga de modelos, tokenización e inferencia asíncrona")
+    ContainerDb(db, "Base de Datos", "SQLite", "Almacenamiento de resultados y métricas")
+  }
 
-### Architecture Pattern
-**Decision:** Use a layered architecture with API layer → Business logic layer → Data access layer.
+  Rel(user, api, "Envía solicitudes (JSON)", "HTTPS")
+  Rel(api, nlp, "Solicita inferencia asíncrona", "Internal")
+  Rel(api, db, "Persiste resultados", "SQL/JDBC")
+```
 
-**Rationale:** This separation of concerns improves maintainability and testability. Each layer has distinct responsibilities, making the system easier to extend and modify.
+### Descripción de Contenedores
 
-### Async Processing
-**Decision:** Implement async inference for both models to improve throughput and prevent blocking.
+*   **API Application (FastAPI):** Puerta de entrada. Gestiona las peticiones REST, valida esquemas de entrada (Pydantic) y orquesta la lógica.
+*   **NLP Engine (Transformers):** Motor central. Responsable de la carga de modelos BETO/mBERT, preprocesamiento y ejecución de inferencia en modo asíncrono para no bloquear el servidor.
+*   **Base de Datos (SQLite):** Almacenamiento persistente. Guarda la trazabilidad de cada diagnóstico: texto, etiqueta real, predicciones de ambos modelos y tiempos de respuesta.
+*   **Entorno de Despliegue (Docker):** Empaquetado mediante Docker y Docker Compose para asegurar consistencia en ejecución (API + Motor NLP en un contenedor, Base de Datos en volúmenes persistentes).
 
-**Rationale:** Async processing allows concurrent model inference, significantly reducing total processing time for multiple texts. This is crucial for scalability.
+## 3. Objetivos y Fuera de Alcance
 
-### Database Design
-**Decision:** Use SQLite with a single `evaluation_results` table for storing all evaluation data.
+**Objetivos:**
+- Plataforma unificada de comparación de BETO vs mBERT en detección de fake news en español.
+- Procesamiento asíncrono para alta escalabilidad.
+- Persistencia de resultados para análisis histórico.
+- Endpoints REST para integración.
 
-**Rationale:** SQLite provides ACID compliance with minimal setup overhead. The schema is simple and sufficient for the initial requirements. File-based storage avoids database server dependencies.
+**Fuera de Alcance:**
+- Entrenamiento de modelos.
+- Interfaz Frontend (solo API).
+- Procesamiento en streaming.
 
-### Data Storage
-**Decision:** Store raw text, labels, predictions, and timing metrics in the database.
+## 4. Decisiones Técnicas
+- **Arquitectura:** Capas (API -> Negocio -> Datos).
+- **Procesamiento:** Inferencia asíncrona (`async/await`) en FastAPI.
+- **Validación:** Uso estricto de Pydantic.
+- **Persistencia:** SQLite para simplicidad operativa inicial.
 
-**Rationale:** This provides complete audit trail and enables historical analysis. Timing metrics allow performance comparison between models.
+## 5. Riesgos y Compensaciones
+*   **Huella de Memoria:** Los modelos NLP son pesados; mitigación mediante gestión estricta de caché de modelos en Docker.
+*   **Escalabilidad:** Se evaluará el *batching* de peticiones si el throughput de la API decrece.
+*   **Migración:** La capa de acceso a datos está desacoplada para facilitar migraciones futuras a sistemas como PostgreSQL.
 
-## Risks / Trade-offs
+## 6. Plan de Migración
+1.  **Fase de Desarrollo:** Estructura, Dockerización y pipeline de datos.
+2.  **Fase de Implementación Core:** Integración con Transformers.
+3.  **Fase de Funcionalidades:** Cálculo de métricas y almacenamiento.
+4.  **Fase de Despliegue:** Validación y documentación final.
 
-**[Risk] Model Compatibility → Mitigation:** Ensure Hugging Face Transformers versions are compatible with both BETO and mBERT models. Test with different library versions before implementation.
-
-**[Risk] Performance Scaling → Mitigation:** Profile the async implementation and consider batching for large datasets. Monitor database performance with increasing data volume.
-
-**[Risk] Data Quality → Mitigation:** Implement robust text preprocessing and validation to handle noisy Spanish text data.
-
-**[Risk] SQLite Limitations → Mitigation:** Design the schema to be easily migratable to other database systems if needed in the future.
-
-**[Risk] Async Complexity → Mitigation:** Use proper error handling and retry mechanisms for failed inference requests.
-
-## Migration Plan
-
-### Phase 1: Development (Weeks 1-2)
-- Set up project structure and dependencies
-- Implement data preprocessing pipeline
-- Integrate BETO and mBERT models via Hugging Face
-
-### Phase 2: Core Implementation (Weeks 3-4)
-- Develop async inference service
-- Implement SQLite database integration
-- Create basic API endpoints
-
-### Phase 3: Features & Testing (Weeks 5-6)
-- Add metrics calculation and reporting
-- Implement batch evaluation endpoint
-- Add comprehensive error handling and logging
-- Conduct unit and integration testing
-
-### Phase 4: Deployment (Week 7)
-- Set up local development environment
-- Create deployment scripts
-- Document API usage and configuration
-
-## Open Questions
-
-- What is the optimal batch size for async processing?
-- How will we handle text encoding issues with special Spanish characters?
-- What are the performance characteristics with large datasets?
-- How will we handle model versioning and updates?
-- What is the expected load for concurrent users?
+## 7. Preguntas Abiertas
+*   ¿Límite máximo de tokens para evitar OOM?
+*   ¿Requerimientos específicos de hardware (GPU) para inferencia en producción?

@@ -1,63 +1,21 @@
-## 1. Project Setup
+# Backlog de Desarrollo
 
-- [x] 1.1 Create project structure and directory layout
-- [x] 1.2 Initialize Python project with requirements.txt
-- [ ] 1.3 Set up Git repository and initial commit
-- [ ] 1.4 Configure development environment
+## Tareas de Entorno (Docker)
+- [x] 1.1 Crear Dockerfile base para Python 3.11 con dependencias optimizadas (20 min)
+- [x] 1.2 Configurar docker-compose.yml para servicios de API y volumen de persistencia SQLite (20 min)
+- [x] 1.3 Configurar volúmenes para caché de modelos HuggingFace para persistencia entre contenedores (15 min)
 
-## 2. Data Pipeline Development
+## Tareas de Lógica (Python - FastAPI y Pydantic)
+- [x] 2.1 Configurar estructura básica de proyecto FastAPI y endpoints vacíos (20 min)
+- [x] 2.2 Definir esquemas Pydantic estrictos para Request (entrada) y Response (salida) (30 min)
+- [x] 2.3 Implementar validación de esquemas en los endpoints usando Pydantic (25 min)
 
-- [ ] 2.1 Implement Spanish text preprocessing module
-- [ ] 2.2 Create dataset loading utilities for CSV/JSON formats
-- [ ] 2.3 Develop data validation and cleaning functions
-- [ ] 2.4 Implement label encoding for fake/real classification
+## Tareas de Lógica (Python - Inferencia Asíncrona)
+- [x] 3.1 Implementar service layer asíncrono para carga y ejecución del modelo BETO (30 min)
+- [x] 3.2 Implementar service layer asíncrono para carga y ejecución del modelo mBERT (30 min)
+- [x] 3.3 Desarrollar orquestador para ejecutar ambas inferencias de forma concurrente con `asyncio.gather` (30 min)
 
-## 3. Model Integration
-
-- [ ] 3.1 Integrate BETO model via Hugging Face Transformers
-- [ ] 3.2 Integrate mBERT model via Hugging Face Transformers
-- [ ] 3.3 Implement async inference wrapper for both models
-- [ ] 3.4 Create model configuration management
-
-## 4. Core Evaluation Engine
-
-- [ ] 4.1 Implement metrics calculation (accuracy, precision, recall, F1-score)
-- [ ] 4.2 Create evaluation result aggregation module
-- [ ] 4.3 Develop performance timing and benchmarking
-- [ ] 4.4 Implement result validation and consistency checks
-
-## 5. Database Integration
-
-- [ ] 5.1 Design SQLite database schema
-- [ ] 5.2 Implement database connection management
-- [ ] 5.3 Create CRUD operations for evaluation results
-- [ ] 5.4 Implement data indexing and optimization
-
-## 6. API Development
-
-- [x] 6.1 Set up FastAPI application with OpenAPI documentation
-- [x] 6.2 Implement /api/v1/evaluate endpoint for single text evaluation
-- [x] 6.3 Implement /api/v1/dataset/evaluate endpoint for batch evaluation
-- [x] 6.4 Implement /api/v1/reports/metrics endpoint for comparative reports
-- [x] 6.5 Implement /api/v1/results/export endpoint for data export
-
-## 7. Application Services
-
-- [x] 7.1 Create service layer for business logic coordination
-- [x] 7.2 Implement error handling and logging
-- [x] 7.3 Create health check and monitoring endpoints
-- [x] 7.4 Implement request validation and response formatting
-
-## 8. Testing and Quality Assurance
-
-- [x] 8.1 Write unit tests for all modules
-- [x] 8.2 Create integration tests for API endpoints
-- [x] 8.3 Implement performance and load testing
-- [x] 8.4 Set up test data and fixtures
-
-## 9. Deployment and Documentation
-
-- [x] 9.1 Create deployment scripts and configuration
-- [x] 9.2 Write comprehensive API documentation
-- [x] 9.3 Create user guides and usage examples
-- [ ] 9.4 Set up development and production environments
+## Tareas de Lógica (Python - Persistencia)
+- [x] 4.1 Diseñar esquema de tabla `evaluation_results` en SQLite (20 min)
+- [x] 4.2 Implementar acceso a datos asíncrono seguro para persistencia (25 min)
+- [ ] 4.3 Desarrollar lógica de cálculo de métricas (accuracy, F1-score) en el service layer (30 min)

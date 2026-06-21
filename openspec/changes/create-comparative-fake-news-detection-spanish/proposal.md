@@ -1,31 +1,31 @@
-## Why
+## Propósito
 
-Create a comparative evaluation pipeline to assess and compare the performance of BETO (Spanish BERT) and mBERT (Multilingual BERT) models for Spanish fake news detection. This addresses the growing need for specialized Spanish language models and provides a systematic approach to model selection and evaluation.
+Crear un pipeline de evaluación comparativa para evaluar y comparar el rendimiento de los modelos BETO (BERT en español) y mBERT (BERT multilingüe) en la detección de noticias falsas en español. Esto responde a la creciente necesidad de modelos de lenguaje especializados en español y proporciona un enfoque sistemático para la selección y evaluación de modelos.
 
-## What Changes
+## Qué Cambia
 
-- Create a FastAPI-based comparative evaluation platform for BETO and mBERT models
-- Implement async inference capabilities for both models
-- Add SQLite database for storing evaluation results and metrics
-- Generate comparative reports via REST API endpoints
-- Develop data loading and preprocessing pipeline for Spanish fake news datasets
+- Crear una plataforma de evaluación comparativa basada en FastAPI para los modelos BETO y mBERT
+- Implementar capacidades de inferencia asíncrona para ambos modelos
+- Agregar base de datos SQLite para almacenar resultados de evaluación y métricas
+- Generar reportes comparativos mediante endpoints de API REST
+- Desarrollar pipeline de carga y preprocesamiento de datos para conjuntos de datos de noticias falsas en español
 
-## Capabilities
+## Capacidades
 
-### New Capabilities
-- `beto-mbert-fake-news-detection`: Main comparative evaluation pipeline capability
-- `data-loading-spanish-fake-news`: Load and preprocess Spanish fake news datasets
-- `model-inference-async`: Async inference using BETO and mBERT models
-- `metrics-calculation`: Calculate performance metrics (accuracy, precision, recall, F1-score)
-- `results-storage`: Store evaluation results in SQLite database
-- `api-rest-reporting`: Generate comparative reports via REST API
+### Nuevas Capacidades
+- `beto-mbert-fake-news-detection`: Capacidad principal del pipeline de evaluación comparativa
+- `data-loading-spanish-fake-news`: Cargar y preprocesar conjuntos de datos de noticias falsas en español
+- `model-inference-async`: Inferencia asíncrona usando modelos BETO y mBERT
+- `metrics-calculation`: Calcular métricas de rendimiento (accuracy, precision, recall, F1-score)
+- `results-storage`: Almacenar resultados de evaluación en base de datos SQLite
+- `api-rest-reporting`: Generar reportes comparativos mediante API REST
 
-### Modified Capabilities
+### Capacidades Modificadas
 
-## Impact
+## Impacto
 
-- New FastAPI endpoints for model evaluation
-- Integration with Hugging Face Transformers library
-- SQLite database for persistent storage of evaluation results
-- Async processing capabilities for improved performance
-- Enhanced data preprocessing pipeline for Spanish text
+- Nuevos endpoints de FastAPI para evaluación de modelos
+- Integración con la librería Hugging Face Transformers
+- Base de datos SQLite para almacenamiento persistente de resultados de evaluación
+- Capacidades de procesamiento asíncrono para mejor rendimiento
+- Pipeline de preprocesamiento de datos mejorado para texto en español
