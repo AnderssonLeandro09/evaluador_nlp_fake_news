@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Fake News Detector</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .active-nav { @apply bg-blue-600 text-white; }
+        .metric-card {
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body class="bg-gray-100 h-screen flex overflow-hidden">
@@ -17,17 +23,17 @@
     <aside class="w-64 bg-slate-900 text-white flex flex-col">
         <div class="p-6 text-center border-b border-slate-800">
             <h1 class="text-xl font-bold flex items-center justify-center gap-2">
-                <i class="fas fa-robot text-blue-400"></i>
+                <i class="fas fa-microchip text-blue-400"></i>
                 NLP Detector
             </h1>
         </div>
         <nav class="flex-1 p-4 space-y-2">
             <button onclick="switchView('evaluate')" id="nav-evaluate" class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-slate-800 bg-slate-800 text-white">
-                <i class="fas fa-search w-5"></i>
+                <i class="fas fa-magnifying-glass w-5"></i>
                 <span>Nueva Evaluación</span>
             </button>
             <button onclick="switchView('history')" id="nav-history" class="w-full flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-slate-800 text-slate-400">
-                <i class="fas fa-history w-5"></i>
+                <i class="fas fa-clock-rotate-left w-5"></i>
                 <span>Historial</span>
             </button>
         </nav>
@@ -55,7 +61,7 @@
                             <option value="0">Real (0)</option>
                         </select>
                         <button id="analyze-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all flex items-center gap-2">
-                            <i class="fas fa-magic"></i> Analizar
+                            <i class="fas fa-wand-magic-sparkles"></i> Analizar
                         </button>
                     </div>
                 </div>
@@ -64,9 +70,9 @@
             <!-- Results Grid -->
             <div id="results-container" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- BETO Card -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+                <div id="card-beto" onclick="openDetails('BETO')" class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all group">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-700">BETO <span class="text-xs font-normal text-slate-400">(Spanish BERT)</span></h3>
+                        <h3 class="text-lg font-bold text-slate-700 group-hover:text-blue-600 transition-colors">BETO <span class="text-xs font-normal text-slate-400">(Spanish BERT)</span></h3>
                         <span id="beto-badge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
                     </div>
                     <div class="space-y-3">
@@ -82,12 +88,15 @@
                             <span class="text-slate-500">Accuracy:</span>
                             <span id="beto-acc" class="font-semibold"></span>
                         </div>
+                        <div class="text-center mt-4">
+                            <span class="text-xs text-blue-500 font-medium underline">Ver detalles técnicos <i class="fas fa-arrow-right ml-1"></i></span>
+                        </div>
                     </div>
                 </div>
                 <!-- mBERT Card -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
+                <div id="card-mbert" onclick="openDetails('mBERT')" class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all group">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-700">mBERT <span class="text-xs font-normal text-slate-400">(Multilingual BERT)</span></h3>
+                        <h3 class="text-lg font-bold text-slate-700 group-hover:text-blue-600 transition-colors">mBERT <span class="text-xs font-normal text-slate-400">(Multilingual BERT)</span></h3>
                         <span id="mbert-badge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
                     </div>
                     <div class="space-y-3">
@@ -102,6 +111,9 @@
                         <div class="flex justify-between">
                             <span class="text-slate-500">Accuracy:</span>
                             <span id="mbert-acc" class="font-semibold"></span>
+                        </div>
+                        <div class="text-center mt-4">
+                            <span class="text-xs text-blue-500 font-medium underline">Ver detalles técnicos <i class="fas fa-arrow-right ml-1"></i></span>
                         </div>
                     </div>
                 </div>
@@ -134,9 +146,37 @@
         </div>
     </main>
 
+    <!-- Details Modal -->
+    <div id="detallesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-line text-lg"></i>
+                    </div>
+                    <h3 id="modal-title" class="text-xl font-bold text-slate-800">Detalles Técnicos</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-full">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-8">
+                <div class="grid grid-cols-2 gap-4" id="modal-metrics">
+                    <!-- Metrics injected here -->
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end bg-slate-50">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2 rounded-xl font-semibold transition-all shadow-lg shadow-slate-200">
+                    Cerrar Reporte
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const state = {
-            currentView: 'evaluate'
+            currentView: 'evaluate',
+            lastResult: null
         };
 
         function switchView(view) {
@@ -206,6 +246,7 @@
                     body: JSON.stringify({ text, label: label === "" ? null : parseInt(label) })
                 });
                 const data = await res.json();
+                state.lastResult = data;
                 
                 document.getElementById('results-container').classList.remove('hidden');
                 
@@ -227,7 +268,52 @@
                 alert('Error al analizar: ' + e.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-magic"></i> Analizar';
+                btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analizar';
+            }
+        });
+
+        function openDetails(model) {
+            if (!state.lastResult) return;
+            
+            const details = model === 'BETO' ? state.lastResult.beto_// la respuesta ya viene con detalles_tecnicos
+                : state.lastResult.mbert_result.detalles_tecnicos;
+            
+            // Fix: reference the correct object property
+            const modelData = model === 'BETO' ? state.lastResult.beto_result : state.lastResult.mbert_result;
+            const d = modelData.detalles_tecnicos;
+            
+            document.getElementById('modal-title').textContent = `Reporte Analítico - ${model}`;
+            
+            const metrics = [
+                { label: 'Precisión', value: `${(d.precision * 100).toFixed(2)}%`, icon: 'fa-bullseye', color: 'text-blue-600', bg: 'bg-blue-50' },
+                { label: 'Recall', value: `${(d.recall * 100).toFixed(2)}%`, icon: 'fa-filter', color: 'text-green-600', bg: 'bg-green-50' },
+                { label: 'F1-Score', value: `${(d.f1_score * 100).toFixed(2)}%`, icon: 'fa-chart-line', color: 'text-purple-600', bg: 'bg-purple-50' },
+                { label: 'Confianza Global', value: `${(d.confiabilidad_global * 100).toFixed(2)}%`, icon: 'fa-shield-check', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                { label: 'Tokens', value: d.tokens_procesados, icon: 'fa-font', color: 'text-orange-600', bg: 'bg-orange-50' },
+                { label: 'Latencia', value: `${d.tiempo_latencia_ms.toFixed(2)} ms`, icon: 'fa-stopwatch', color: 'text-slate-600', bg: 'bg-slate-50' },
+            ];
+            
+            const metricsContainer = document.getElementById('modal-metrics');
+            metricsContainer.innerHTML = metrics.map(m => `
+                <div class="p-4 ${m.bg} rounded-2xl border border-transparent hover:border-slate-200 transition-all metric-card">
+                    <div class="flex items-center gap-3 mb-2">
+                        <i class="fas ${m.icon} ${m.color} text-sm"></i>
+                        <span class="text-xs font-medium text-slate-500">${m.label}</span>
+                    </div>
+                    <div class="text-xl font-bold text-slate-800">${m.value}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('detallesModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detallesModal').classList.add('hidden');
+        }
+
+        document.getElementById('detallesModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detallesModal')) {
+                closeModal();
             }
         });
     </script>

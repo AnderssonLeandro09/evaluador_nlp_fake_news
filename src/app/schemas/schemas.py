@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import datetime
 
 class TextEvaluationRequest(BaseModel):
@@ -10,12 +10,21 @@ class BatchEvaluationRequest(BaseModel):
     texts: List[str] = Field(..., min_items=1)
     labels: Optional[List[int]] = None
 
+class ModelDetails(BaseModel):
+    precision: float
+    recall: float
+    f1_score: float
+    confiabilidad_global: float
+    tokens_procesados: int
+    tiempo_latencia_ms: float
+
 class ModelPrediction(BaseModel):
     model_name: str
     prediction: int
     time_ms: float
     accuracy: float
     f1_score: float
+    detalles_tecnicos: ModelDetails
 
 class EvaluationResponse(BaseModel):
     id: Optional[int] = None

@@ -31,7 +31,7 @@ The application follows a layered architecture:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/betos-mbert-fake-news-detector.git
+   git clone https://github.com/AnderssonLeandro09/evaluador_nlp_fake_news.git
    cd betos-mbert-fake-news-detector
    ```
 
