@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./evaluation_results.db
+      - PYTHONPATH=/app/src
+    volumes:
+      - ./:/app
+      - ./model_cache:/root/.cache/huggingface
+    restart: unless-stopped
